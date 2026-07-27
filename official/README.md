@@ -1,5 +1,10 @@
 # RT-1 TensorFlow Setup on WSL2
 
+## Sources
+
+- RT-1: [google-research/robotics_transformer](https://github.com/google-research/robotics_transformer)
+- Tensor2Robot: [google-research/tensor2robot](https://github.com/google-research/tensor2robot)
+
 ## 1. Install WSL2
 
 Run PowerShell as administrator:
