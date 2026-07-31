@@ -129,9 +129,10 @@ complete dataset. By default, it extracts the first successful episode.
 python download_sample_episode.py
 ```
 
-Each sample is written to its own directory under `data/fractal_samples/`,
-for example `data/fractal_samples/episode_00000/`. Downloaded samples are
-excluded from Git.
+Each sample is written to its own directory under the repository-level
+`data/fractal_samples/`, for example
+`../data/fractal_samples/episode_00000/`. Downloaded samples are excluded
+from Git.
 
 To select an exact zero-based episode index:
 

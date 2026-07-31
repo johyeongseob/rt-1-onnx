@@ -15,6 +15,7 @@ import tensorflow_datasets as tfds
 DEFAULT_DATASET_DIR = (
     "gs://gresearch/robotics/fractal20220817_data/0.1.0"
 )
+REPOSITORY_DIR = Path(__file__).resolve().parent.parent
 
 
 def _to_json(value: Any) -> Any:
@@ -47,7 +48,7 @@ def _parse_args() -> argparse.Namespace:
   parser.add_argument(
       "--output-dir",
       type=Path,
-      default=Path("data/fractal_samples"),
+      default=REPOSITORY_DIR / "data" / "fractal_samples",
       help=(
           "Parent directory in which to create an episode_XXXXX directory."
       ),
