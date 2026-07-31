@@ -9,3 +9,6 @@ official/robotics_transformer/film_efficientnet/efficientnet_checkpoints/
 # Python cache files
 official/**/__pycache__/
 official/**/*.py[cod]
+
+# Downloaded RT-1 dataset samples
+official/data/

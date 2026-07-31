@@ -53,7 +53,9 @@ python -m pip install \
   "numpy==1.26.4" \
   "grpcio==1.59.3" \
   "grpcio-tools==1.59.3" \
-  "protobuf==4.25.9" \
+  "protobuf==4.21.12" \
+  "tensorflow-datasets==4.9.4" \
+  "tensorflow-metadata==1.17.2" \
   "typing-extensions==4.5.0" \
   "cryptography==41.0.7" \
   gin-config \
@@ -117,6 +119,33 @@ Ran 9 tests
 
 OK (skipped=1)
 ```
+
+## 8. Download one dataset sample
+
+The script reads the public RT-1 training dataset without downloading the
+complete dataset. By default, it extracts the first successful episode.
+
+```bash
+python download_sample_episode.py
+```
+
+Each sample is written to its own directory under `data/fractal_samples/`,
+for example `data/fractal_samples/episode_00000/`. Downloaded samples are
+excluded from Git.
+
+To select an exact zero-based episode index:
+
+```bash
+python download_sample_episode.py --episode-index 0
+```
+
+To download an inclusive range of episodes:
+
+```bash
+python download_sample_episode.py --start-index 2 --end-index 10
+```
+
+Existing episode directories are skipped without being overwritten.
 
 ## Resume later
 

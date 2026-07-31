@@ -1,2 +1,3 @@
 # rt-1-lab
-Trying convert robotics-transformer (rt-1) to the pytorch-version
+
+Converting Robotics Transformer (RT-1) from TensorFlow to ONNX.
