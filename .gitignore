@@ -7,8 +7,11 @@ official/robotics_transformer/trained_checkpoints/
 official/robotics_transformer/film_efficientnet/efficientnet_checkpoints/
 
 # Python cache files
-official/**/__pycache__/
-official/**/*.py[cod]
+**/__pycache__/
+**/*.py[cod]
 
 # Downloaded RT-1 dataset samples
-official/data/
+data/
+
+# Generated module validation artifacts
+validation_artifacts/

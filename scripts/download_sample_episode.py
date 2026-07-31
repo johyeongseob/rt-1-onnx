@@ -1,4 +1,4 @@
-"""Download reproducible RT-1 training episodes from the public dataset."""
+"""Download reproducible RT-1 dataset episodes for shared validation."""
 
 from __future__ import annotations
 

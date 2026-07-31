@@ -120,34 +120,6 @@ Ran 9 tests
 OK (skipped=1)
 ```
 
-## 8. Download one dataset sample
-
-The script reads the public RT-1 training dataset without downloading the
-complete dataset. By default, it extracts the first successful episode.
-
-```bash
-python download_sample_episode.py
-```
-
-Each sample is written to its own directory under the repository-level
-`data/fractal_samples/`, for example
-`../data/fractal_samples/episode_00000/`. Downloaded samples are excluded
-from Git.
-
-To select an exact zero-based episode index:
-
-```bash
-python download_sample_episode.py --episode-index 0
-```
-
-To download an inclusive range of episodes:
-
-```bash
-python download_sample_episode.py --start-index 2 --end-index 10
-```
-
-Existing episode directories are skipped without being overwritten.
-
 ## Resume later
 
 ```powershell
