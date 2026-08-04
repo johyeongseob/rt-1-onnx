@@ -13,5 +13,8 @@ official/robotics_transformer/film_efficientnet/efficientnet_checkpoints/
 # Downloaded RT-1 dataset samples
 data/
 
+# Downloaded pretrained models
+models/
+
 # Generated module validation artifacts
 validation_artifacts/
