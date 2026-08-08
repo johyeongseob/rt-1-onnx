@@ -43,24 +43,8 @@ git clone https://github.com/google-research/tensor2robot.git
 ## 4. Install dependencies
 
 ```bash
-python -m pip install --upgrade pip wheel
-
-python -m pip install \
-  "setuptools==80.9.0" \
-  "tensorflow==2.14.0" \
-  "tensorflow-probability==0.22.1" \
-  "tf-agents==0.18.0" \
-  "numpy==1.26.4" \
-  "grpcio==1.59.3" \
-  "grpcio-tools==1.59.3" \
-  "protobuf==4.21.12" \
-  "tensorflow-datasets==4.9.4" \
-  "tensorflow-metadata==1.17.2" \
-  "typing-extensions==4.5.0" \
-  "cryptography==41.0.7" \
-  gin-config \
-  tf-slim
-
+python -m pip install --upgrade pip
+python -m pip install -r ../requirements.txt
 python -m pip check
 ```
 

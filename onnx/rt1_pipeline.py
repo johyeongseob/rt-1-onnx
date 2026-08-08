@@ -23,6 +23,9 @@ ACTION_TOKENS = 11
 EMBEDDING_DIM = 512
 TOKENS_PER_STEP = IMAGE_TOKENS + ACTION_TOKENS
 SEQUENCE_LENGTH = TIME_STEPS * TOKENS_PER_STEP
+DEFAULT_USE_MODEL = (
+    ONNX_DIR.parent / "models" / "universal_sentence_encoder_large" / "5"
+)
 
 
 def _action_index(position: int) -> int:
@@ -58,6 +61,7 @@ class RT1ONNXPipeline:
       film_model: Path | str,
       token_learner_model: Path | str,
       transformer_model: Path | str,
+      use_model: Path | str = DEFAULT_USE_MODEL,
   ) -> None:
     model_paths = {
         "FiLM-EfficientNet": Path(film_model).expanduser().resolve(),
@@ -78,7 +82,61 @@ class RT1ONNXPipeline:
     self._transformer = ort.InferenceSession(
         str(model_paths["Transformer"]), providers=providers
     )
+    self._use_model_path = Path(use_model).expanduser().resolve()
+    self._use = None
     self._attention_mask = _attention_mask()
+
+  def encode_instructions(
+      self, instructions: str | list[str] | tuple[str, ...]
+  ) -> npt.NDArray[np.float32]:
+    """Encode instruction strings with the pinned USE Large /5 model."""
+    if isinstance(instructions, str):
+      instruction_batch = [instructions]
+    elif isinstance(instructions, (list, tuple)) and instructions \
+        and all(isinstance(value, str) for value in instructions):
+      instruction_batch = list(instructions)
+    else:
+      raise TypeError(
+          "instructions must be a string or a non-empty list of strings."
+      )
+    if not self._use_model_path.is_dir():
+      raise FileNotFoundError(
+          f"Local USE Large /5 model was not found: {self._use_model_path}\n"
+          "Run: python scripts/download_use_model.py"
+      )
+    if self._use is None:
+      import tensorflow_hub as hub  # pylint: disable=import-outside-toplevel
+      self._use = hub.load(str(self._use_model_path))
+    embeddings = self._use(instruction_batch).numpy()
+    return np.ascontiguousarray(embeddings, dtype=np.float32)
+
+  def predict_instruction(
+      self,
+      images: npt.NDArray[np.uint8],
+      instructions: str | list[str] | tuple[str, ...],
+  ) -> tuple[npt.NDArray[np.int64], dict[str, npt.NDArray]]:
+    """Run RT-1 from six-frame histories and natural-language instructions."""
+    embeddings = self.encode_instructions(instructions)
+    if embeddings.shape[0] != images.shape[0]:
+      raise ValueError(
+          "The instruction batch size must match the image batch size; "
+          f"received {embeddings.shape[0]} and {images.shape[0]}."
+      )
+    return self.predict(images, embeddings)
+
+  def predict_episode_instruction(
+      self,
+      images: npt.NDArray[np.uint8],
+      instructions: str | list[str] | tuple[str, ...],
+  ) -> tuple[npt.NDArray[np.int64], dict[str, npt.NDArray]]:
+    """Run an episode from image sequences and natural-language instructions."""
+    embeddings = self.encode_instructions(instructions)
+    if embeddings.shape[0] != images.shape[0]:
+      raise ValueError(
+          "The instruction batch size must match the image batch size; "
+          f"received {embeddings.shape[0]} and {images.shape[0]}."
+      )
+    return self.predict_episode(images, embeddings)
 
   def predict(
       self,

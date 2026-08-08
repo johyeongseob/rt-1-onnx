@@ -24,12 +24,28 @@ def _parse_args() -> argparse.Namespace:
   )
   parser.add_argument("--episode-index", type=int, default=1)
   parser.add_argument(
+      "--instruction",
+      type=str,
+      default=None,
+      help=(
+          "Natural-language instruction to run. If omitted, use the "
+          "instruction stored in the episode metadata."
+      ),
+  )
+  parser.add_argument(
       "--data-dir", type=Path, default=REPOSITORY_DIR / "data/fractal_samples"
   )
   parser.add_argument(
       "--artifacts-dir",
       type=Path,
       default=REPOSITORY_DIR / "validation_artifacts",
+  )
+  parser.add_argument(
+      "--use-model",
+      type=Path,
+      default=(
+          REPOSITORY_DIR / "models/universal_sentence_encoder_large/5"
+      ),
   )
   return parser.parse_args()
 
@@ -46,16 +62,19 @@ def main() -> None:
       np.asarray(Image.open(path).convert("RGB"), dtype=np.uint8)
       for path in frame_paths
   ])[np.newaxis]
-  embedding = np.load(
-      episode_dir / "language_embedding.npy", allow_pickle=False
-  ).astype(np.float32, copy=False)[np.newaxis]
+  instruction = (
+      args.instruction
+      if args.instruction is not None
+      else metadata["instruction"]
+  )
 
   pipeline = RT1ONNXPipeline(
       REPOSITORY_DIR / "models/film_efficientnet/film_efficientnet.onnx",
       REPOSITORY_DIR / "models/token_learner/token_learner.onnx",
       REPOSITORY_DIR / "models/transformer/transformer.onnx",
+      args.use_model,
   )
-  tokens, actions = pipeline.predict_episode(images, embedding)
+  tokens, actions = pipeline.predict_episode_instruction(images, instruction)
   steps = []
   for index in range(len(frame_paths)):
     steps.append({
@@ -67,7 +86,7 @@ def main() -> None:
     })
   result = {
       "episode_index": args.episode_index,
-      "instruction": metadata["instruction"],
+      "instruction": instruction,
       "num_frames": len(frame_paths),
       "steps": steps,
   }
@@ -80,7 +99,7 @@ def main() -> None:
       json.dumps(result, indent=2) + "\n", encoding="utf-8"
   )
   print(f"Episode: {episode_name}")
-  print(f"Instruction: {metadata['instruction']}")
+  print(f"Instruction: {instruction}")
   print(f"Frames: {len(frame_paths)}")
   print(f"Output: {output_path}")
 

@@ -18,3 +18,6 @@ models/
 
 # Generated module validation artifacts
 validation_artifacts/
+
+# Generated visualization artifacts
+visualization_artifacts/

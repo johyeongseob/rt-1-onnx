@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Compare TensorFlow and ONNX TokenLearner outputs."""
+"""Compare TensorFlow and ONNX six-frame image-token histories."""
 
 from __future__ import annotations
 
@@ -21,12 +21,12 @@ from pathlib import Path
 import numpy as np
 
 
-REPOSITORY_DIR = Path(__file__).resolve().parents[2]
+REPOSITORY_DIR = Path(__file__).resolve().parents[1]
 
 
 def _parse_args() -> argparse.Namespace:
   parser = argparse.ArgumentParser(
-      description="Compare RT-1 TokenLearner validation arrays."
+      description="Compare RT-1 six-frame image-token history arrays."
   )
   parser.add_argument("--episode-index", type=int, default=1)
   parser.add_argument(
@@ -47,15 +47,10 @@ def _load(path: Path) -> np.ndarray:
 
 def main() -> None:
   args = _parse_args()
-  if args.episode_index < 0:
-    raise ValueError("--episode-index must be zero or greater.")
-  if args.rtol < 0.0 or args.atol < 0.0:
-    raise ValueError("--rtol and --atol must be zero or greater.")
-
   artifact_dir = (
       args.artifacts_dir.expanduser().resolve()
       / f"episode_{args.episode_index:05d}"
-      / "token_learner"
+      / "image_history"
   )
   tensorflow_path = artifact_dir / "tensorflow.npy"
   onnx_path = artifact_dir / "onnx.npy"
@@ -70,9 +65,9 @@ def main() -> None:
   print(f"  dtype: {onnx_output.dtype}")
 
   if tensorflow_output.shape != onnx_output.shape:
-    raise AssertionError("TokenLearner output shapes do not match.")
+    raise AssertionError("Image-token history shapes do not match.")
   if tensorflow_output.dtype != onnx_output.dtype:
-    raise AssertionError("TokenLearner output dtypes do not match.")
+    raise AssertionError("Image-token history dtypes do not match.")
 
   absolute_error = np.abs(tensorflow_output - onnx_output)
   match = np.allclose(
@@ -85,7 +80,7 @@ def main() -> None:
   print(f"Match: {match}")
 
   if not match:
-    raise AssertionError("The TokenLearner outputs do not match.")
+    raise AssertionError("The image-token histories do not match.")
 
 
 if __name__ == "__main__":

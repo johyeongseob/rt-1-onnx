@@ -21,7 +21,7 @@ from pathlib import Path
 import numpy as np
 
 
-REPOSITORY_DIR = Path(__file__).resolve().parents[2]
+REPOSITORY_DIR = Path(__file__).resolve().parents[1]
 TIME_STEPS = 6
 IMAGE_TOKENS = 8
 ACTION_TOKENS = 11

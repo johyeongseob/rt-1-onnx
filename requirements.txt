@@ -1,13 +1,19 @@
 # Core RT-1 TensorFlow runtime
+setuptools==80.9.0
+wheel==0.47.0
 tensorflow==2.14.0
 tensorflow-probability==0.22.1
 tf-agents==0.18.0
 tensorflow-datasets==4.9.4
+tensorflow-metadata==1.17.2
 tensorflow-hub==0.15.0
 tf-slim==1.1.0
 gin-config==0.5.0
+typing-extensions==4.5.0
+cryptography==41.0.7
 
 # Tensor2Robot protocol generation
+grpcio==1.59.3
 grpcio-tools==1.59.3
 protobuf==4.21.12
 

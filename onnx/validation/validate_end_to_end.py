@@ -25,6 +25,15 @@ def _parse_args() -> argparse.Namespace:
   parser.add_argument("--episode-index", type=int, default=1)
   parser.add_argument("--start-frame", type=int, default=0)
   parser.add_argument(
+      "--instruction",
+      type=str,
+      default=None,
+      help=(
+          "Natural-language instruction to run. If omitted, use the "
+          "instruction stored in the episode metadata."
+      ),
+  )
+  parser.add_argument(
       "--film-model",
       type=Path,
       default=REPOSITORY_DIR / "models/film_efficientnet/film_efficientnet.onnx",
@@ -38,6 +47,13 @@ def _parse_args() -> argparse.Namespace:
       "--transformer-model",
       type=Path,
       default=REPOSITORY_DIR / "models/transformer/transformer.onnx",
+  )
+  parser.add_argument(
+      "--use-model",
+      type=Path,
+      default=(
+          REPOSITORY_DIR / "models/universal_sentence_encoder_large/5"
+      ),
   )
   parser.add_argument(
       "--data-dir", type=Path, default=REPOSITORY_DIR / "data/fractal_samples"
@@ -66,15 +82,20 @@ def main() -> None:
       np.asarray(Image.open(path).convert("RGB"), dtype=np.uint8)
       for path in frame_paths
   ])[np.newaxis, ...]
-  embedding = np.load(
-      episode_dir / "language_embedding.npy", allow_pickle=False
-  ).astype(np.float32, copy=False)[np.newaxis, ...]
   metadata = json.loads((episode_dir / "metadata.json").read_text("utf-8"))
+  instruction = (
+      args.instruction
+      if args.instruction is not None
+      else metadata["instruction"]
+  )
 
   pipeline = RT1ONNXPipeline(
-      args.film_model, args.token_learner_model, args.transformer_model
+      args.film_model,
+      args.token_learner_model,
+      args.transformer_model,
+      args.use_model,
   )
-  tokens, actions = pipeline.predict(images, embedding)
+  tokens, actions = pipeline.predict_instruction(images, instruction)
 
   output_dir = (
       args.artifacts_dir.expanduser().resolve() / episode_name / "end_to_end"
@@ -86,7 +107,7 @@ def main() -> None:
   np.savez(action_path, **actions)
 
   print(f"Frames: {frame_paths[0]} through {frame_paths[-1]}")
-  print(f"Instruction: {metadata['instruction']}")
+  print(f"Instruction: {instruction}")
   print(f"Action tokens: {token_path}")
   print(f"Tokens: {tokens.tolist()}")
   print(f"Actions: {action_path}")

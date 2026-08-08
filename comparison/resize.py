@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Compare TensorFlow and ONNX FiLM-EfficientNet outputs."""
+"""Compare saved TensorFlow and NumPy RT-1 resize outputs."""
 
 from __future__ import annotations
 
@@ -21,12 +21,12 @@ from pathlib import Path
 import numpy as np
 
 
-REPOSITORY_DIR = Path(__file__).resolve().parents[2]
+REPOSITORY_DIR = Path(__file__).resolve().parents[1]
 
 
 def _parse_args() -> argparse.Namespace:
   parser = argparse.ArgumentParser(
-      description="Compare RT-1 FiLM-EfficientNet validation arrays."
+      description="Compare saved RT-1 resize validation arrays."
   )
   parser.add_argument("--episode-index", type=int, default=1)
   parser.add_argument(
@@ -34,8 +34,8 @@ def _parse_args() -> argparse.Namespace:
       type=Path,
       default=REPOSITORY_DIR / "validation_artifacts",
   )
-  parser.add_argument("--rtol", type=float, default=1e-4)
-  parser.add_argument("--atol", type=float, default=1e-4)
+  parser.add_argument("--rtol", type=float, default=1e-5)
+  parser.add_argument("--atol", type=float, default=1e-6)
   return parser.parse_args()
 
 
@@ -55,7 +55,7 @@ def main() -> None:
   artifact_dir = (
       args.artifacts_dir
       / f"episode_{args.episode_index:05d}"
-      / "film_efficientnet"
+      / "resize"
   )
   tensorflow_path = artifact_dir / "tensorflow.npy"
   onnx_path = artifact_dir / "onnx.npy"
@@ -70,9 +70,9 @@ def main() -> None:
   print(f"  dtype: {onnx_output.dtype}")
 
   if tensorflow_output.shape != onnx_output.shape:
-    raise AssertionError("FiLM-EfficientNet output shapes do not match.")
+    raise AssertionError("Resize output shapes do not match.")
   if tensorflow_output.dtype != onnx_output.dtype:
-    raise AssertionError("FiLM-EfficientNet output dtypes do not match.")
+    raise AssertionError("Resize output dtypes do not match.")
 
   absolute_error = np.abs(tensorflow_output - onnx_output)
   match = np.allclose(
@@ -85,7 +85,7 @@ def main() -> None:
   print(f"Match: {match}")
 
   if not match:
-    raise AssertionError("The FiLM-EfficientNet outputs do not match.")
+    raise AssertionError("The resize outputs do not match.")
 
 
 if __name__ == "__main__":

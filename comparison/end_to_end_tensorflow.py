@@ -8,7 +8,7 @@ from pathlib import Path
 import numpy as np
 
 
-REPOSITORY_DIR = Path(__file__).resolve().parents[2]
+REPOSITORY_DIR = Path(__file__).resolve().parents[1]
 
 
 def _parse_args() -> argparse.Namespace:
