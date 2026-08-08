@@ -24,7 +24,7 @@ def restore_encoder(
   encoder = pretrained_efficientnet_encoder.EfficientNetEncoder(
       model_variant="b3",
       early_film=True,
-      weights=None,
+      weights="imagenet",
       include_top=False,
       pooling=False,
   )

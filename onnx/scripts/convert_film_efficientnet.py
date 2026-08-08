@@ -35,14 +35,14 @@ DEFAULT_OUTPUT_PATH = (
 )
 
 # tf2onnx exposes these fixed values as inputs. They reflect the tensors used
-# by the restored RT-1 graph: zero centering and ImageNet standard-deviation
+# by the restored RT-1 graph: ImageNet mean centering and standard-deviation
 # rescaling.
 _CAPTURED_PREPROCESSING_CONSTANTS = {
     "rescaling_3/mul/y:0": np.asarray(
         1.0, dtype=np.float32
     ) / np.sqrt(np.asarray([0.229, 0.224, 0.225], dtype=np.float32)),
     "normalization_1/sub/y:0": np.asarray(
-        [0.0, 0.0, 0.0], dtype=np.float32
+        [0.485, 0.456, 0.406], dtype=np.float32
     ),
 }
 

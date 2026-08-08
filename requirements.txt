@@ -1,0 +1,24 @@
+# Core RT-1 TensorFlow runtime
+tensorflow==2.14.0
+tensorflow-probability==0.22.1
+tf-agents==0.18.0
+tensorflow-datasets==4.9.4
+tensorflow-hub==0.15.0
+tf-slim==1.1.0
+gin-config==0.5.0
+
+# Tensor2Robot protocol generation
+grpcio-tools==1.59.3
+protobuf==4.21.12
+
+# ONNX conversion and inference
+tf2onnx==1.17.0
+onnx==1.16.2
+onnxruntime==1.18.1
+
+# Data and image processing
+numpy==1.26.4
+Pillow==12.3.0
+
+# MuJoCo visualization
+mujoco==3.11.0
