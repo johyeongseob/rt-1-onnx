@@ -59,7 +59,7 @@ Episode 3의 `move coke can near water bottle` 지시문에 대한 실제 카메
 비교한 프레임: 66
 action token 불일치 프레임: 0
 연속 action 불일치: 0
-최대 절대 action 오차: 2.384185791015625e-07
+최대 절대 action 오차: 2.38e-07
 결과: 일치
 ```
 
@@ -77,32 +77,12 @@ TensorFlow 기준 구현과 사실상 동일한 행동을 출력했음을 의미
 USE Large `/5` 모델과 필요한 Fractal episode를 받는 방법은
 [다운로드 문서](docs/downloads.md)를 참고하세요.
 
-## ONNX 변환과 추론
+## ONNX 변환·추론·검증
 
-공식 `rt1main` 체크포인트를 세 ONNX 모델로 변환하고 사용자 지시문으로
-episode를 추론하는 방법은 [ONNX 변환 및 추론 문서](docs/onnx_conversion.md)를
-참고하세요.
-
-## TensorFlow-ONNX 동등성 검증
-
-변환 결과는 입력 전처리부터 최종 action까지 다음 영역으로 나누어 단계별로
-검증합니다.
-
-- **이미지 전처리**
-  - dtype 변환, crop, 300 x 300 리사이즈
-- **Language**
-  - ONNX USE-Large `/5` 출력과 공식 dataset의 512차원 언어 임베딩
-- **Vision**
-  - FiLM-EfficientNet 출력, TokenLearner 출력, 6프레임 image history
-- **Transformer**
-  - 입력 sequence, causal attention mask, logits
-- **Action**
-  - 11개 action token, 디코딩된 연속 action
-- **End-to-end 동등성**
-  - 실제 Fractal episode 전체 프레임의 action token 및 연속 action
-
-전체 검증 명령, 예상 tensor shape, 허용 오차 및 end-to-end 결과는
-[`comparison/README.md`](comparison/README.md)를 참고하세요.
+공식 `rt1main` 체크포인트를 ONNX로 변환하고 자연어 지시문으로 episode를
+추론하는 방법은 [ONNX 변환 및 추론 문서](docs/onnx_conversion.md)를,
+단계별 출력과 전체 episode의 동등성 검증 결과는
+[검증 문서](docs/validation.md)를 참고하세요.
 
 ## MuJoCo 시각화
 
@@ -122,6 +102,7 @@ rt-1-onnx/
 |   |-- downloads.md
 |   |-- onnx_conversion.md
 |   |-- pipeline.md
+|   |-- validation.md
 |   `-- mujoco.md
 |-- models/                   # USE 및 생성된 ONNX 모델 (Git 제외)
 |-- official/                 # 공식 TensorFlow RT-1 실행 코드와 검증기
@@ -166,7 +147,7 @@ rt-1-onnx/
 - [ONNX Runtime Extensions](https://github.com/microsoft/onnxruntime-extensions)
 - [MuJoCo](https://mujoco.org/)
 
-## 라이선스
+## License
 
 이 프로젝트에서 자체적으로 작성한 코드는 Apache License 2.0으로
 배포됩니다. 자세한 내용은 [LICENSE.md](LICENSE.md)를 확인하세요.
