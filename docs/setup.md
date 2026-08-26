@@ -78,8 +78,10 @@ sudo apt update
 sudo apt install -y python3.10 python3.10-venv python3.10-dev build-essential
 ```
 
-Tensor2Robot protobuf 생성에 필요한 추가 환경과 공식 소스 준비 과정은
-[`../official/README.md`](../official/README.md)를 참고하세요.
+공식 TensorFlow RT-1 환경과 Tensor2Robot 준비 방법은
+[`../official/README.md`](../official/README.md)를 참고하세요. 이 문서는
+protobuf 생성, TensorFlow 2.x 호환성 패치 및 공식 테스트 실행 방법을
+설명합니다.
 
 ## 3. Python 가상환경 생성
 
