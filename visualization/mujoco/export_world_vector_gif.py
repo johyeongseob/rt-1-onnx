@@ -51,10 +51,13 @@ def _camera_for(trajectory: np.ndarray, zoom: float) -> mujoco.MjvCamera:
   camera = mujoco.MjvCamera()
   center = (trajectory.min(axis=0) + trajectory.max(axis=0)) / 2.0
   span = np.ptp(trajectory, axis=0)
-  camera.lookat[:] = center
-  camera.distance = max(0.35, float(span.max()) * 2.4) / zoom
+  # Include the wrist and short schematic arm in the composition instead of
+  # framing only the end-effector trajectory. This keeps the gripper readable
+  # without making it fill most of the 320 x 256 render.
+  camera.lookat[:] = center + np.asarray([-0.090, 0.0, -0.015])
+  camera.distance = max(0.68, float(span.max()) * 2.8) / zoom
   camera.azimuth = -45.0
-  camera.elevation = -25.0
+  camera.elevation = -22.0
   return camera
 
 
