@@ -28,11 +28,11 @@ python comparison/resize.py
 
 ## 언어 임베딩
 
-USE Large `/5`로 `close middle drawer`를 임베딩한 뒤 episode 1에 저장된
-임베딩과 비교합니다.
+ONNX USE Large `/5`로 episode metadata의 지시문을 임베딩한 뒤 Fractal
+episode에 저장된 공식 `language_embedding.npy`와 비교합니다.
 
 ```bash
-python official/validation/validate_use_embedding.py
+python comparison/use_large_v5.py --episode-index 1
 ```
 
 작은 부동소수점 오차는 정상입니다. 검증 결과는 `rtol=1e-5`, `atol=1e-6`
@@ -120,7 +120,7 @@ python comparison/end_to_end_models.py
 재현 가능한 비교를 위해 `--instruction`을 생략하여 두 파이프라인 모두 episode의
 지시문을 사용하게 합니다. ONNX 진입점은 episode에 미리 계산되어 저장된
 `language_embedding.npy`를 불러오는 대신, metadata의 지시문을 로컬 USE Large
-`/5` SavedModel로 인코딩합니다.
+`/5` ONNX 모델로 인코딩합니다.
 
 ## End-to-end: 전체 episode
 
