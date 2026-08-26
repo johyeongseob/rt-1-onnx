@@ -143,7 +143,7 @@ rt-1-onnx/
 - [Universal Sentence Encoder Large `/5` ONNX 변환본](https://huggingface.co/SamLowe/universal-sentence-encoder-large-5-onnx)
 - [Fractal RT-1 데이터셋](https://www.tensorflow.org/datasets/catalog/fractal20220817_data)
 - [ONNX](https://onnx.ai/)
-- [tf2onnx](https://github.com/onnx/tensorflow-onnx) — ONNX 변환
+- [tf2onnx](https://github.com/onnx/tensorflow-onnx)
 - [ONNX Runtime](https://onnxruntime.ai/)
 - [ONNX Runtime Extensions](https://github.com/microsoft/onnxruntime-extensions)
 - [MuJoCo](https://mujoco.org/)
