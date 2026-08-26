@@ -21,3 +21,6 @@ validation_artifacts/
 
 # Generated visualization artifacts
 visualization_artifacts/
+
+# Local architecture presentation
+architecture.pptx
