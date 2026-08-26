@@ -1,20 +1,20 @@
-# TensorFlow-ONNX comparison
+# TensorFlow-ONNX 비교 검증
 
-This directory contains the cross-framework comparisons used to verify that
-the modular ONNX RT-1 preserves the official TensorFlow `rt1main` behavior.
-Run all commands from the repository root with the WSL environment activated.
+이 디렉터리에는 모듈식 ONNX RT-1이 공식 TensorFlow `rt1main`의 동작을
+그대로 보존하는지 확인하기 위한 프레임워크 간 비교 도구가 포함되어 있습니다.
+모든 명령은 WSL 가상환경을 활성화한 뒤 저장소 최상위 디렉터리에서 실행합니다.
 
-## Validation pattern
+## 검증 방식
 
-Each stage follows the same pattern:
+각 단계는 다음과 같은 방식으로 검증합니다.
 
 ```text
-official TensorFlow output -> validation_artifacts/.../tensorflow.*
-ONNX output               -> validation_artifacts/.../onnx.*
-comparison                -> Match: True
+공식 TensorFlow 출력 -> validation_artifacts/.../tensorflow.*
+ONNX 출력            -> validation_artifacts/.../onnx.*
+출력 비교             -> Match: True
 ```
 
-## Preprocessing
+## 전처리
 
 ```bash
 python official/validation/validate_preprocessors.py
@@ -26,17 +26,17 @@ python onnx/validation/validate_resize.py
 python comparison/resize.py
 ```
 
-## Language embedding
+## 언어 임베딩
 
-Embed `close middle drawer` with USE Large `/5` and compare it with the
-embedding stored in episode 1:
+USE Large `/5`로 `close middle drawer`를 임베딩한 뒤 episode 1에 저장된
+임베딩과 비교합니다.
 
 ```bash
 python official/validation/validate_use_embedding.py
 ```
 
-Small floating-point differences are expected. The tested result matches with
-`rtol=1e-5` and `atol=1e-6`.
+작은 부동소수점 오차는 정상입니다. 검증 결과는 `rtol=1e-5`, `atol=1e-6`
+조건에서 일치합니다.
 
 ## FiLM-EfficientNet
 
@@ -46,7 +46,7 @@ python onnx/validation/validate_film_efficientnet.py
 python comparison/film_efficientnet.py
 ```
 
-Expected shape: `[1, 9, 9, 512]`.
+예상 출력 형상은 `[1, 9, 9, 512]`입니다.
 
 ## TokenLearner
 
@@ -56,9 +56,9 @@ python onnx/validation/validate_token_learner.py
 python comparison/token_learner.py
 ```
 
-Expected shape: `[1, 8, 512]`.
+예상 출력 형상은 `[1, 8, 512]`입니다.
 
-## Six-frame image history
+## 6프레임 이미지 히스토리
 
 ```bash
 python official/validation/validate_image_history.py
@@ -66,12 +66,12 @@ python onnx/validation/validate_image_history.py
 python comparison/image_history.py
 ```
 
-Expected shape: `[1, 6, 8, 512]`.
+예상 출력 형상은 `[1, 6, 8, 512]`입니다.
 
 ## Transformer
 
-Create the 114-token sequence and causal attention mask, then compare the
-TensorFlow and ONNX transformer outputs:
+114개 토큰으로 구성된 입력 시퀀스와 causal attention mask를 생성한 뒤
+TensorFlow와 ONNX Transformer의 출력을 비교합니다.
 
 ```bash
 python comparison/prepare_transformer_input.py
@@ -80,15 +80,16 @@ python onnx/validation/validate_transformer.py
 python comparison/transformer.py
 ```
 
-Expected output shape: `[1, 114, 256]`.
+예상 출력 형상은 `[1, 114, 256]`입니다.
 
-To explicitly create the sequence from the ONNX image history:
+ONNX 이미지 히스토리로 입력 시퀀스를 명시적으로 생성하려면 다음과 같이
+실행합니다.
 
 ```bash
 python comparison/prepare_transformer_input.py --source onnx
 ```
 
-## Action decoding
+## Action 디코딩
 
 ```bash
 python official/validation/validate_action_decoder.py
@@ -96,7 +97,7 @@ python onnx/validation/validate_action_decoder.py
 python comparison/action.py
 ```
 
-The decoder produces:
+디코더는 다음 값을 생성합니다.
 
 - `terminate_episode`
 - `world_vector` (`x`, `y`, `z`)
@@ -105,10 +106,10 @@ The decoder produces:
 - `base_displacement_vector` (`x`, `y`)
 - `base_displacement_vertical_rotation` (`yaw`)
 
-## End-to-end: first six frames
+## End-to-end: 최초 6프레임
 
-Run the official SavedModel policy and the connected ONNX pipeline, then
-compare their final action:
+공식 SavedModel 정책과 연결된 ONNX 파이프라인을 각각 실행한 뒤 최종 action을
+비교합니다.
 
 ```bash
 python official/validation/validate_end_to_end.py
@@ -116,15 +117,15 @@ python onnx/validation/validate_end_to_end.py
 python comparison/end_to_end_models.py
 ```
 
-For reproducible comparison, omit `--instruction` so both paths use the
-episode instruction. The ONNX entry point encodes the metadata instruction
-with the local USE Large `/5` SavedModel rather than loading the episode's
-precomputed `language_embedding.npy`.
+재현 가능한 비교를 위해 `--instruction`을 생략하여 두 파이프라인 모두 episode의
+지시문을 사용하게 합니다. ONNX 진입점은 episode에 미리 계산되어 저장된
+`language_embedding.npy`를 불러오는 대신, metadata의 지시문을 로컬 USE Large
+`/5` SavedModel로 인코딩합니다.
 
-## End-to-end: complete episode
+## End-to-end: 전체 episode
 
-Run all 66 frames of episode 1 through each pipeline and compare every action
-in the generated JSON files:
+episode 1의 전체 66프레임을 각 파이프라인으로 추론하고 생성된 JSON 파일의
+모든 action을 비교합니다.
 
 ```bash
 python official/validation/validate_episode.py
@@ -132,7 +133,7 @@ python onnx/validation/validate_episode.py
 python comparison/end_to_end_episode.py
 ```
 
-Expected result:
+예상 결과는 다음과 같습니다.
 
 ```text
 Frames compared: 66
@@ -142,7 +143,7 @@ Maximum absolute action error: 2.384185791015625e-07
 Match: True
 ```
 
-Outputs:
+출력 파일은 다음 경로에 저장됩니다.
 
 ```text
 validation_artifacts/episode_00001/episode/official.json
