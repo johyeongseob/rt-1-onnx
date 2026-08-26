@@ -23,6 +23,10 @@ generate the modular ONNX policy models. Compatibility and validation changes
 made in this repository do not change the ownership or license of the upstream
 work.
 
+The `rt1main` checkpoint is distributed as part of the official Robotics
+Transformer repository. The repository is licensed under the Apache License
+2.0, and no separate checkpoint-specific license was identified.
+
 The official checkpoint and generated ONNX model files are not tracked in this
 Git repository. Anyone downloading, converting, or redistributing those files
 must preserve the applicable upstream notices and comply with the terms of the
@@ -60,6 +64,10 @@ not relicense the downloaded model or its parameters.
 
 - Dataset: `fractal20220817_data`, version `0.1.0`
 - Catalog: <https://www.tensorflow.org/datasets/catalog/fractal20220817_data>
+- Open X-Embodiment collection and licensing notice:
+  <https://github.com/google-deepmind/open_x_embodiment>
+- License: Creative Commons Attribution 4.0 International (CC BY 4.0)
+- License URL: <https://creativecommons.org/licenses/by/4.0/>
 - Storage location used by the downloader:
   `gs://gresearch/robotics/fractal20220817_data/0.1.0`
 - Usage: Validation of TensorFlow and ONNX inference on recorded RT-1 episodes
@@ -75,27 +83,41 @@ When publishing results obtained from this dataset, cite the RT-1 work:
 > Anthony Brohan et al. “RT-1: Robotics Transformer for Real-World Control at
 > Scale.” arXiv:2212.06817, 2022. <https://arxiv.org/abs/2212.06817>
 
-## ONNX Toolchain
+## Direct Python Dependencies
 
-The following projects are used to convert and execute the policy network:
+The following table covers every package directly pinned in
+`requirements.txt`. Versions are the versions used for the documented
+conversion and validation environment.
 
-| Component | Purpose | Upstream project | License |
-| --- | --- | --- | --- |
-| ONNX | Open model representation | <https://github.com/onnx/onnx> | Apache License 2.0 |
-| ONNX Runtime | ONNX inference runtime | <https://github.com/microsoft/onnxruntime> | MIT License |
-| ONNX Runtime Extensions | Text tokenizer custom operators | <https://github.com/microsoft/onnxruntime-extensions> | MIT License |
-| tf2onnx | TensorFlow-to-ONNX conversion | <https://github.com/onnx/tensorflow-onnx> | Apache License 2.0 |
+| Component | Version | Purpose | Upstream project | License |
+| --- | --- | --- | --- | --- |
+| setuptools | 80.9.0 | Python package installation | <https://github.com/pypa/setuptools> | MIT |
+| wheel | 0.47.0 | Python wheel support | <https://github.com/pypa/wheel> | MIT |
+| TensorFlow | 2.14.0 | Official RT-1 reference and conversion | <https://github.com/tensorflow/tensorflow> | Apache-2.0 |
+| TensorFlow Probability | 0.22.1 | TensorFlow probability utilities | <https://github.com/tensorflow/probability> | Apache-2.0 |
+| TF-Agents | 0.18.0 | RT-1 policy dependencies | <https://github.com/tensorflow/agents> | Apache-2.0 |
+| TensorFlow Datasets | 4.9.4 | Fractal dataset access | <https://github.com/tensorflow/datasets> | Apache-2.0 |
+| TensorFlow Metadata | 1.17.2 | Dataset metadata types | <https://github.com/tensorflow/metadata> | Apache-2.0 |
+| TF-Slim | 1.1.0 | TensorFlow model utilities | <https://github.com/google-research/tf-slim> | Apache-2.0 |
+| Gin Config | 0.5.0 | RT-1 configuration parsing | <https://github.com/google/gin-config> | Apache-2.0 |
+| typing-extensions | 4.5.0 | Python typing backports | <https://github.com/python/typing_extensions> | PSF-2.0 |
+| cryptography | 41.0.7 | Authentication dependency support | <https://github.com/pyca/cryptography> | Apache-2.0 OR BSD-3-Clause |
+| grpcio | 1.59.3 | gRPC runtime | <https://github.com/grpc/grpc> | Apache-2.0 |
+| grpcio-tools | 1.59.3 | Tensor2Robot protobuf generation | <https://github.com/grpc/grpc> | Apache-2.0 |
+| protobuf | 4.21.12 | Protocol Buffer runtime | <https://github.com/protocolbuffers/protobuf> | BSD-3-Clause |
+| tf2onnx | 1.17.0 | TensorFlow-to-ONNX conversion | <https://github.com/onnx/tensorflow-onnx> | Apache-2.0 |
+| ONNX | 1.16.2 | Open model representation | <https://github.com/onnx/onnx> | Apache-2.0 |
+| ONNX Runtime | 1.18.1 | ONNX inference runtime | <https://github.com/microsoft/onnxruntime> | MIT |
+| ONNX Runtime Extensions | 0.15.2 | USE tokenizer custom operators | <https://github.com/microsoft/onnxruntime-extensions> | MIT |
+| NumPy | 1.26.4 | Tensor and numerical processing | <https://github.com/numpy/numpy> | BSD-3-Clause |
+| Pillow | 12.3.0 | Image and GIF processing | <https://github.com/python-pillow/Pillow> | MIT-CMU |
+| MuJoCo | 3.11.0 | Action visualization | <https://github.com/google-deepmind/mujoco> | Apache-2.0 |
 
-These libraries are installed as dependencies and are not relicensed by this
-project. Their names and trademarks belong to their respective owners.
-
-## Other Runtime Dependencies
-
-This project also depends on TensorFlow, TensorFlow Probability, TF-Agents,
-TensorFlow Datasets, NumPy, Pillow, protobuf, gRPC, and MuJoCo,
-among other packages listed in `requirements.txt`. Each dependency is governed
-by the license distributed with that package. Installing this project does not
-alter those terms.
+These packages are installed as dependencies and are not vendored or
+relicensed by this project. Their source distributions and binary wheels may
+include transitive or bundled components under additional compatible licenses;
+the license files distributed with each installed package remain authoritative.
+Names and trademarks belong to their respective owners.
 
 ## Generated Artifacts
 
