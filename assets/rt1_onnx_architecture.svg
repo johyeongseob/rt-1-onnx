@@ -1,0 +1,195 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1060" viewBox="0 0 1800 1060" role="img" aria-labelledby="title desc">
+  <title id="title">RT-1 ONNX inference architecture</title>
+  <desc id="desc">Natural-language instructions and six RGB camera frames pass through a TensorFlow language encoder, three modular ONNX policy models, and NumPy action decoding to produce eleven RT-1 robot actions.</desc>
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f8fafc"/>
+      <stop offset="1" stop-color="#eef4f8"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="5" stdDeviation="7" flood-color="#0f2740" flood-opacity="0.13"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#36566f"/>
+    </marker>
+    <style>
+      .title { font: 700 38px 'Segoe UI', Arial, sans-serif; fill: #102a43; }
+      .subtitle { font: 400 18px 'Segoe UI', Arial, sans-serif; fill: #526b7f; }
+      .section { font: 700 17px 'Segoe UI', Arial, sans-serif; letter-spacing: 1.6px; fill: #627d98; }
+      .box-title { font: 700 20px 'Segoe UI', Arial, sans-serif; fill: #102a43; }
+      .box-sub { font: 400 15px 'Segoe UI', Arial, sans-serif; fill: #486581; }
+      .shape { font: 600 15px Consolas, 'Courier New', monospace; fill: #243b53; }
+      .small { font: 400 14px 'Segoe UI', Arial, sans-serif; fill: #526b7f; }
+      .output { font: 600 16px 'Segoe UI', Arial, sans-serif; fill: #243b53; }
+      .arrow { fill: none; stroke: #36566f; stroke-width: 3; marker-end: url(#arrow); }
+      .arrow-dashed { fill: none; stroke: #7b8794; stroke-width: 2.5; stroke-dasharray: 8 7; marker-end: url(#arrow); }
+      .card { filter: url(#shadow); }
+    </style>
+  </defs>
+
+  <rect width="1800" height="1060" rx="28" fill="url(#background)"/>
+
+  <text x="70" y="68" class="title">RT-1 ONNX Inference Architecture</text>
+  <text x="70" y="102" class="subtitle">TensorFlow language encoding + modular ONNX policy network + NumPy action decoding</text>
+
+  <rect x="70" y="130" width="1660" height="75" rx="14" fill="#ffffff" stroke="#cbd8e3"/>
+  <rect x="100" y="154" width="20" height="20" rx="5" fill="#f59e0b"/>
+  <text x="133" y="170" class="small">TensorFlow SavedModel</text>
+  <rect x="342" y="154" width="20" height="20" rx="5" fill="#2780c2"/>
+  <text x="375" y="170" class="small">ONNX Runtime</text>
+  <rect x="550" y="154" width="20" height="20" rx="5" fill="#23a36d"/>
+  <text x="583" y="170" class="small">NumPy / Python</text>
+  <line x1="755" y1="146" x2="755" y2="188" stroke="#d9e2ec"/>
+  <text x="785" y="170" class="small">Reference weights: official Google RT-1 <tspan font-family="Consolas, monospace">rt1main</tspan> checkpoint</text>
+
+  <text x="70" y="254" class="section">INPUTS AND LANGUAGE CONDITIONING</text>
+
+  <g class="card">
+    <rect x="70" y="280" width="260" height="125" rx="18" fill="#ffffff" stroke="#9fb3c8" stroke-width="2"/>
+    <circle cx="112" cy="326" r="18" fill="#e8f1f8"/>
+    <path d="M102 320h20M102 328h15M102 336h11" stroke="#2780c2" stroke-width="3" stroke-linecap="round"/>
+    <text x="145" y="327" class="box-title">Instruction</text>
+    <text x="100" y="370" class="box-sub">Natural-language command</text>
+    <text x="100" y="392" class="shape">str × B</text>
+  </g>
+
+  <g class="card">
+    <rect x="410" y="280" width="285" height="125" rx="18" fill="#fff8e8" stroke="#f59e0b" stroke-width="3"/>
+    <rect x="434" y="300" width="8" height="85" rx="4" fill="#f59e0b"/>
+    <text x="466" y="326" class="box-title">USE Large /5</text>
+    <text x="466" y="354" class="box-sub">Language encoder</text>
+    <text x="466" y="382" class="shape">TensorFlow SavedModel</text>
+  </g>
+
+  <g class="card">
+    <rect x="780" y="280" width="260" height="125" rx="18" fill="#ffffff" stroke="#9fb3c8" stroke-width="2"/>
+    <text x="810" y="326" class="box-title">Language Context</text>
+    <text x="810" y="356" class="box-sub">Repeated for each frame</text>
+    <text x="810" y="386" class="shape">float32 [B, 512]</text>
+  </g>
+
+  <g class="card">
+    <rect x="70" y="465" width="260" height="145" rx="18" fill="#ffffff" stroke="#9fb3c8" stroke-width="2"/>
+    <rect x="98" y="495" width="54" height="42" rx="6" fill="#d7e7f3" stroke="#2780c2"/>
+    <rect x="108" y="505" width="54" height="42" rx="6" fill="#c5dcec" stroke="#2780c2"/>
+    <rect x="118" y="515" width="54" height="42" rx="6" fill="#a9cee5" stroke="#2780c2"/>
+    <text x="196" y="522" class="box-title">6 RGB Frames</text>
+    <text x="100" y="579" class="shape">uint8 [B, 6, H, W, 3]</text>
+  </g>
+
+  <g class="card">
+    <rect x="410" y="465" width="285" height="145" rx="18" fill="#eaf8f1" stroke="#23a36d" stroke-width="3"/>
+    <rect x="434" y="487" width="8" height="101" rx="4" fill="#23a36d"/>
+    <text x="466" y="516" class="box-title">Image Preprocessing</text>
+    <text x="466" y="548" class="box-sub">dtype → crop → resize</text>
+    <text x="466" y="580" class="shape">[B, 6, 300, 300, 3]</text>
+  </g>
+
+  <path d="M330 342 H410" class="arrow"/>
+  <path d="M695 342 H780" class="arrow"/>
+  <path d="M330 538 H410" class="arrow"/>
+
+  <text x="1095" y="254" class="section">MODULAR ONNX POLICY</text>
+  <rect x="1080" y="270" width="650" height="355" rx="24" fill="#eaf3fb" stroke="#8bb9d9" stroke-width="2" stroke-dasharray="9 7"/>
+  <text x="1110" y="304" class="small">Three independently converted and validated ONNX models</text>
+
+  <g class="card">
+    <rect x="1120" y="335" width="270" height="120" rx="18" fill="#e8f3fb" stroke="#2780c2" stroke-width="3"/>
+    <rect x="1144" y="357" width="8" height="76" rx="4" fill="#2780c2"/>
+    <text x="1175" y="382" class="box-title">FiLM-EfficientNet</text>
+    <text x="1175" y="410" class="box-sub">Language-conditioned vision</text>
+    <text x="1175" y="438" class="shape">[B, 6, 9, 9, 512]</text>
+  </g>
+
+  <g class="card">
+    <rect x="1450" y="335" width="240" height="120" rx="18" fill="#e8f3fb" stroke="#2780c2" stroke-width="3"/>
+    <rect x="1474" y="357" width="8" height="76" rx="4" fill="#2780c2"/>
+    <text x="1505" y="382" class="box-title">TokenLearner</text>
+    <text x="1505" y="410" class="box-sub">8 tokens per frame</text>
+    <text x="1505" y="438" class="shape">[B, 6, 8, 512]</text>
+  </g>
+
+  <g class="card">
+    <rect x="1120" y="490" width="270" height="105" rx="18" fill="#ffffff" stroke="#9fb3c8" stroke-width="2"/>
+    <text x="1150" y="525" class="box-title">6-Frame History</text>
+    <text x="1150" y="556" class="box-sub">Zero-fill, then rolling window</text>
+    <text x="1150" y="582" class="shape">[B, 6, 8, 512]</text>
+  </g>
+
+  <g class="card">
+    <rect x="1450" y="490" width="240" height="105" rx="18" fill="#ffffff" stroke="#9fb3c8" stroke-width="2"/>
+    <text x="1480" y="525" class="box-title">Zero Action Slots</text>
+    <text x="1480" y="556" class="box-sub">11 slots per timestep</text>
+    <text x="1480" y="582" class="shape">[B, 6, 11, 512]</text>
+  </g>
+
+  <path d="M1390 395 H1450" class="arrow"/>
+  <path d="M1570 455 V490" class="arrow"/>
+  <path d="M1510 455 C1510 475 1395 467 1308 490" class="arrow"/>
+  <path d="M1040 342 C1080 342 1080 375 1120 375" class="arrow-dashed"/>
+  <path d="M695 538 C870 538 930 420 1120 420" class="arrow"/>
+
+  <text x="70" y="690" class="section">SEQUENCE MODELING AND ACTION DECODING</text>
+
+  <g class="card">
+    <rect x="70" y="720" width="280" height="145" rx="18" fill="#eaf8f1" stroke="#23a36d" stroke-width="3"/>
+    <rect x="94" y="744" width="8" height="97" rx="4" fill="#23a36d"/>
+    <text x="126" y="770" class="box-title">Concatenate + Flatten</text>
+    <text x="126" y="800" class="box-sub">8 image + 11 action slots</text>
+    <text x="126" y="828" class="shape">[B, 6, 19, 512]</text>
+    <text x="126" y="852" class="shape">→ [B, 114, 512]</text>
+  </g>
+
+  <g class="card">
+    <rect x="415" y="720" width="245" height="145" rx="18" fill="#ffffff" stroke="#9fb3c8" stroke-width="2"/>
+    <text x="445" y="770" class="box-title">Attention Mask</text>
+    <text x="445" y="802" class="box-sub">RT-1 causal constraints</text>
+    <text x="445" y="836" class="shape">float32 [114, 114]</text>
+  </g>
+
+  <g class="card">
+    <rect x="730" y="720" width="270" height="145" rx="18" fill="#e8f3fb" stroke="#2780c2" stroke-width="3"/>
+    <rect x="754" y="744" width="8" height="97" rx="4" fill="#2780c2"/>
+    <text x="786" y="770" class="box-title">Transformer</text>
+    <text x="786" y="800" class="box-sub">Action vocabulary: 256</text>
+    <text x="786" y="833" class="shape">logits [B, 114, 256]</text>
+  </g>
+
+  <g class="card">
+    <rect x="1070" y="720" width="245" height="145" rx="18" fill="#eaf8f1" stroke="#23a36d" stroke-width="3"/>
+    <rect x="1094" y="744" width="8" height="97" rx="4" fill="#23a36d"/>
+    <text x="1126" y="770" class="box-title">Token Selection</text>
+    <text x="1126" y="800" class="box-sub">Current timestep argmax</text>
+    <text x="1126" y="833" class="shape">int64 [B, 11]</text>
+  </g>
+
+  <g class="card">
+    <rect x="1385" y="720" width="305" height="145" rx="18" fill="#f2ecfb" stroke="#815ac0" stroke-width="3"/>
+    <rect x="1409" y="744" width="8" height="97" rx="4" fill="#815ac0"/>
+    <text x="1441" y="770" class="box-title">Action Decoder</text>
+    <text x="1441" y="800" class="box-sub">Tokens → continuous values</text>
+    <text x="1441" y="833" class="shape">11 RT-1 actions</text>
+  </g>
+
+  <path d="M350 792 H415" class="arrow"/>
+  <path d="M660 792 H730" class="arrow"/>
+  <path d="M1000 792 H1070" class="arrow"/>
+  <path d="M1315 792 H1385" class="arrow"/>
+  <path d="M1240 595 C1050 650 310 630 210 720" class="arrow"/>
+  <path d="M1570 595 C1400 660 410 640 280 720" class="arrow-dashed"/>
+
+  <rect x="70" y="925" width="1620" height="90" rx="18" fill="#ffffff" stroke="#c3b2df" stroke-width="2"/>
+  <text x="100" y="958" class="section" fill="#6b46a1">OUTPUT ACTIONS</text>
+  <line x1="300" y1="940" x2="300" y2="998" stroke="#d9d1e7"/>
+  <text x="335" y="962" class="output">Arm (7)</text>
+  <text x="335" y="990" class="small">xyz · roll/pitch/yaw · gripper</text>
+  <line x1="830" y1="940" x2="830" y2="998" stroke="#d9d1e7"/>
+  <text x="865" y="962" class="output">Mobile Base (3)</text>
+  <text x="865" y="990" class="small">x · y · yaw</text>
+  <line x1="1265" y1="940" x2="1265" y2="998" stroke="#d9d1e7"/>
+  <text x="1300" y="962" class="output">Mode (1)</text>
+  <text x="1300" y="990" class="small">arm · base · terminate</text>
+  <path d="M1538 865 V925" class="arrow"/>
+
+  <text x="70" y="1040" class="small">Hybrid runtime: USE remains in TensorFlow; the RT-1 policy network runs in ONNX Runtime.</text>
+</svg>
