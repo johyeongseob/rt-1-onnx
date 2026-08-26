@@ -16,8 +16,8 @@
 | TensorFlow Probability | 0.22.1 |
 | TF-Agents | 0.18.0 |
 | TensorFlow Datasets | 4.9.4 |
-| TensorFlow Hub | 0.15.0 |
 | ONNX Runtime | 1.18.1 |
+| ONNX Runtime Extensions | 0.15.2 |
 | tf2onnx | 1.17.0 |
 | MuJoCo | 3.11.0 |
 
@@ -154,6 +154,7 @@ python -m pip check
 ```bash
 python -c "import tensorflow as tf; print(tf.__version__)"
 python -c "import onnxruntime as ort; print(ort.__version__)"
+python -c "import onnxruntime_extensions as ortx; print(ortx.__version__)"
 python -c "import tf2onnx; print(tf2onnx.__version__)"
 python -c "import mujoco; print(mujoco.__version__)"
 ```
@@ -163,6 +164,7 @@ python -c "import mujoco; print(mujoco.__version__)"
 ```text
 TensorFlow:    2.14.0
 ONNX Runtime:  1.18.1
+ORT Extensions: 0.15.2
 tf2onnx:       1.17.0
 MuJoCo:        3.11.0
 ```
@@ -188,7 +190,8 @@ Universal Sentence Encoder Large `/5`와 검증용 Fractal episode 준비 방법
 
 ## 9. 설치 확인용 ONNX 추론
 
-세 ONNX 모델을 생성하고 episode 전체 추론으로 설치 상태를 확인하는 방법은
+ONNX USE와 세 정책 ONNX 모델을 연결하고 episode 전체 추론으로 설치 상태를
+확인하는 방법은
 [`onnx_conversion.md`](onnx_conversion.md)를 참고하세요.
 
 TensorFlow-ONNX 전체 동등성 검증 방법은

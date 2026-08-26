@@ -45,12 +45,16 @@ and license notices are retained.
 
 - Model: Universal Sentence Encoder Large, version 5
 - Source: <https://tfhub.dev/google/universal-sentence-encoder-large/5>
+- ONNX conversion:
+  <https://huggingface.co/SamLowe/universal-sentence-encoder-large-5-onnx>
+- ONNX conversion license: Apache License 2.0
 - Usage: Produces the 512-dimensional language embedding used by RT-1
 
-The SavedModel is downloaded separately by `scripts/download_use_model.py` and
-is excluded from Git. It remains subject to the license and terms published by
-its model provider. This project's Apache License 2.0 does not relicense the
-downloaded model or its parameters.
+The ONNX model is downloaded separately by `scripts/download_use_model.py` and
+is excluded from Git. It uses ONNX Runtime Extensions to execute its embedded
+tokenizer. The model remains subject to the license and terms published by its
+original provider and ONNX converter. This project's Apache License 2.0 does
+not relicense the downloaded model or its parameters.
 
 ## Fractal RT-1 Dataset
 
@@ -79,6 +83,7 @@ The following projects are used to convert and execute the policy network:
 | --- | --- | --- | --- |
 | ONNX | Open model representation | <https://github.com/onnx/onnx> | Apache License 2.0 |
 | ONNX Runtime | ONNX inference runtime | <https://github.com/microsoft/onnxruntime> | MIT License |
+| ONNX Runtime Extensions | Text tokenizer custom operators | <https://github.com/microsoft/onnxruntime-extensions> | MIT License |
 | tf2onnx | TensorFlow-to-ONNX conversion | <https://github.com/onnx/tensorflow-onnx> | Apache License 2.0 |
 
 These libraries are installed as dependencies and are not relicensed by this
@@ -87,7 +92,7 @@ project. Their names and trademarks belong to their respective owners.
 ## Other Runtime Dependencies
 
 This project also depends on TensorFlow, TensorFlow Probability, TF-Agents,
-TensorFlow Datasets, TensorFlow Hub, NumPy, Pillow, protobuf, gRPC, and MuJoCo,
+TensorFlow Datasets, NumPy, Pillow, protobuf, gRPC, and MuJoCo,
 among other packages listed in `requirements.txt`. Each dependency is governed
 by the license distributed with that package. Installing this project does not
 alter those terms.

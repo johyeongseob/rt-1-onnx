@@ -12,7 +12,7 @@
 - 최상위 `requirements.txt`의 Python 의존성
 - 공식 Robotics Transformer 및 Tensor2Robot 소스
 - 공식 `rt1main` 체크포인트
-- Universal Sentence Encoder Large `/5`
+- ONNX Universal Sentence Encoder Large `/5`
 - 추론할 Fractal episode
 
 관련 문서:
@@ -31,10 +31,11 @@ official/robotics_transformer/trained_checkpoints/rt1main/
 
 ## 변환 구조
 
-RT-1 정책 네트워크를 다음 세 ONNX 모델로 분리합니다.
+전체 추론은 ONNX USE와 세 개의 RT-1 정책 모델을 연결합니다.
 
 | ONNX 모델 | 역할 |
 | --- | --- |
+| `model.onnx` (USE Large `/5`) | 자연어 지시문을 512차원 임베딩으로 변환 |
 | `film_efficientnet.onnx` | 언어 조건이 적용된 이미지 특징 추출 |
 | `token_learner.onnx` | 프레임당 8개 image token 생성 |
 | `transformer.onnx` | 6프레임 sequence에서 action logits 예측 |
@@ -82,7 +83,7 @@ python onnx/validation/validate_episode.py \
 처리 순서:
 
 1. episode의 RGB frame을 시간 순서대로 읽습니다.
-2. 사용자 지시문을 로컬 USE Large `/5` SavedModel로 인코딩합니다.
+2. 사용자 지시문을 로컬 ONNX USE Large `/5`로 인코딩합니다.
 3. FiLM-EfficientNet, TokenLearner 및 Transformer를 ONNX Runtime에서
    실행합니다.
 4. 각 frame의 11개 action token을 선택합니다.

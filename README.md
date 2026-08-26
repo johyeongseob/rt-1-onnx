@@ -11,12 +11,6 @@ Google의 공식 TensorFlow RT-1 정책 네트워크를 모듈식 ONNX 모델로
 하드웨어와 실행 환경에서 RT-1 추론을 쉽게 재현하고 확장할 수 있도록 하는
 것을 목표로 합니다.
 
-> [!IMPORTANT]
-> 현재 자연어 인코더인 Universal Sentence Encoder Large `/5`는 TensorFlow
-> SavedModel로 실행합니다. FiLM-EfficientNet, TokenLearner, Transformer로
-> 구성된 RT-1 정책 네트워크는 ONNX Runtime으로 실행합니다. 따라서 현재
-> 전체 파이프라인은 TensorFlow와 ONNX Runtime을 함께 사용하는 하이브리드
-> 구조입니다.
 
 ## 개발 단계
 
@@ -26,6 +20,7 @@ Google의 공식 TensorFlow RT-1 정책 네트워크를 모듈식 ONNX 모델로
 
 - WSL2 Ubuntu 22.04 기반 공식 TensorFlow RT-1 실행환경 구축
 - 공식 `rt-1-main` 체크포인트를 사용한 모듈식 ONNX 변환
+- ONNX USE Large `/5`를 연결한 자연어 instruction 기반 ONNX-only 추론
 - NumPy/Python 기반 이미지 전처리, 6프레임 history, Transformer 입력 구성,
   attention mask 및 action 복원
 - 공식 TensorFlow와 ONNX의 모듈별 중간 출력 비교
@@ -63,7 +58,7 @@ TensorFlow 기준 구현과 사실상 동일한 행동을 출력했음을 의미
 
 ## 추론 파이프라인
 
-자연어 지시문과 카메라 관측을 세 개의 ONNX 정책 모델에 연결해 11개의
+자연어 지시문과 카메라 관측을 네 개의 ONNX 모델에 연결해 11개의
 로봇 action을 출력합니다. tensor shape, history, attention mask 및 action
 복원 과정은 [추론 파이프라인 상세 문서](docs/pipeline.md)를 참고하세요.
 
@@ -91,7 +86,7 @@ episode를 추론하는 방법은 [ONNX 변환 및 추론 문서](docs/onnx_conv
 - **이미지 전처리**
   - dtype 변환, crop, 300 x 300 리사이즈
 - **Language**
-  - USE-Large `/5`의 512차원 언어 임베딩
+  - ONNX USE-Large `/5` 출력과 공식 dataset의 512차원 언어 임베딩
 - **Vision**
   - FiLM-EfficientNet 출력, TokenLearner 출력, 6프레임 image history
 - **Transformer**
@@ -159,9 +154,11 @@ rt-1-onnx/
 - [google-research/robotics_transformer](https://github.com/google-research/robotics_transformer)
 - [google-research/tensor2robot](https://github.com/google-research/tensor2robot)
 - [Universal Sentence Encoder](https://tfhub.dev/google/universal-sentence-encoder-large/5)
+- [ONNX USE Large `/5` 변환본](https://huggingface.co/SamLowe/universal-sentence-encoder-large-5-onnx)
 - [Fractal RT-1 데이터셋](https://www.tensorflow.org/datasets/catalog/fractal20220817_data)
 - [ONNX](https://onnx.ai/)
 - [ONNX Runtime](https://onnxruntime.ai/)
+- [ONNX Runtime Extensions](https://github.com/microsoft/onnxruntime-extensions)
 - [MuJoCo](https://mujoco.org/)
 
 ## 라이선스

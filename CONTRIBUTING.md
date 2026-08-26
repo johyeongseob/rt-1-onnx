@@ -119,8 +119,8 @@ rewrite. Doing so makes the source of output differences difficult to audit.
 ### Documentation-only changes
 
 - Confirm that commands, paths, versions, and links match the current code.
-- Do not describe the current system as a fully ONNX-only pipeline. The language
-  encoder still uses a TensorFlow SavedModel.
+- Describe the inference runtime as ONNX-only only when the ONNX USE embedding
+  and complete RT-1 action equivalence checks continue to pass.
 - Do not describe the MuJoCo visualization as the original EDR robot or its
   actual joint trajectory.
 
@@ -283,7 +283,7 @@ Do not commit the following by default:
 - Python virtual environments
 - `__pycache__` directories and `.pyc` files
 - Official checkpoints
-- The downloaded USE SavedModel
+- The downloaded ONNX USE model
 - Generated ONNX models
 - Downloaded Fractal episodes
 - Intermediate NumPy tensors and validation outputs

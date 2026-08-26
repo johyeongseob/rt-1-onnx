@@ -10,7 +10,8 @@ Fractal episode를 전체 원본 데이터셋 없이 선택적으로 준비하�
 ## Universal Sentence Encoder Large /5
 
 RT-1은 Universal Sentence Encoder Large `/5`를 사용하여 자연어 지시문을
-512차원 언어 임베딩으로 변환합니다.
+512차원 언어 임베딩으로 변환합니다. ONNX-only 추론에는 원본 TensorFlow Hub
+모델을 full-precision ONNX로 변환한 커뮤니티 모델을 사용합니다.
 
 다운로드 스크립트:
 
@@ -21,13 +22,22 @@ python scripts/download_use_model.py
 출력 경로:
 
 ```text
-models/universal_sentence_encoder_large/5/
-|-- saved_model.pb
-`-- variables/
+models/universal_sentence_encoder_large_onnx/5/
+|-- model.onnx
+`-- download_metadata.json
 ```
 
-ONNX episode 추론 시 `RT1ONNXPipeline`은 기본적으로 이 경로의 SavedModel을
-TensorFlow Hub로 로드합니다.
+다운로더는 다음 변환본을 사용하며 SHA-256 checksum을 검증합니다.
+
+- ONNX conversion:
+  <https://huggingface.co/SamLowe/universal-sentence-encoder-large-5-onnx>
+- Original model:
+  <https://tfhub.dev/google/universal-sentence-encoder-large/5>
+- SHA-256:
+  `d267b0955793f866593e49ba58474fb57f5314cf757ec0945127c521c569b22f`
+
+`RT1ONNXPipeline`은 ONNX Runtime Extensions의 tokenizer custom operator를
+등록하고 이 모델에 instruction 문자열을 직접 입력합니다.
 
 다운로드한 모델은 Git에서 제외됩니다. 모델 자체에는 TensorFlow Hub의 원
 배포자가 정한 라이선스와 이용 조건이 적용됩니다. 자세한 고지는
@@ -109,7 +119,7 @@ data/fractal_samples/episode_00001/
 ONNX episode 1 추론에 필요한 최소 경로는 다음과 같습니다.
 
 ```text
-models/universal_sentence_encoder_large/5/
+models/universal_sentence_encoder_large_onnx/5/model.onnx
 data/fractal_samples/episode_00001/frames/
 data/fractal_samples/episode_00001/metadata.json
 ```

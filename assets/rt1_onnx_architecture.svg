@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1060" viewBox="0 0 1800 1060" role="img" aria-labelledby="title desc">
   <title id="title">RT-1 ONNX inference architecture</title>
-  <desc id="desc">Natural-language instructions and six RGB camera frames pass through a TensorFlow language encoder, three modular ONNX policy models, and NumPy action decoding to produce eleven RT-1 robot actions.</desc>
+  <desc id="desc">Natural-language instructions and six RGB camera frames pass through an ONNX language encoder, three modular ONNX policy models, and NumPy action decoding to produce eleven RT-1 robot actions.</desc>
   <defs>
     <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0" stop-color="#f8fafc"/>
@@ -30,11 +30,11 @@
   <rect width="1800" height="1060" rx="28" fill="url(#background)"/>
 
   <text x="70" y="68" class="title">RT-1 ONNX Inference Architecture</text>
-  <text x="70" y="102" class="subtitle">TensorFlow language encoding + modular ONNX policy network + NumPy action decoding</text>
+  <text x="70" y="102" class="subtitle">ONNX language encoding + modular ONNX policy network + NumPy action decoding</text>
 
   <rect x="70" y="130" width="1660" height="75" rx="14" fill="#ffffff" stroke="#cbd8e3"/>
-  <rect x="100" y="154" width="20" height="20" rx="5" fill="#f59e0b"/>
-  <text x="133" y="170" class="small">TensorFlow SavedModel</text>
+  <rect x="100" y="154" width="20" height="20" rx="5" fill="#815ac0"/>
+  <text x="133" y="170" class="small">ONNX Runtime Extensions</text>
   <rect x="342" y="154" width="20" height="20" rx="5" fill="#2780c2"/>
   <text x="375" y="170" class="small">ONNX Runtime</text>
   <rect x="550" y="154" width="20" height="20" rx="5" fill="#23a36d"/>
@@ -54,11 +54,11 @@
   </g>
 
   <g class="card">
-    <rect x="410" y="280" width="285" height="125" rx="18" fill="#fff8e8" stroke="#f59e0b" stroke-width="3"/>
-    <rect x="434" y="300" width="8" height="85" rx="4" fill="#f59e0b"/>
+    <rect x="410" y="280" width="285" height="125" rx="18" fill="#f2ecfb" stroke="#815ac0" stroke-width="3"/>
+    <rect x="434" y="300" width="8" height="85" rx="4" fill="#815ac0"/>
     <text x="466" y="326" class="box-title">USE Large /5</text>
     <text x="466" y="354" class="box-sub">Language encoder</text>
-    <text x="466" y="382" class="shape">TensorFlow SavedModel</text>
+    <text x="466" y="382" class="shape">ONNX + Extensions</text>
   </g>
 
   <g class="card">
@@ -191,5 +191,5 @@
   <text x="1300" y="990" class="small">arm · base · terminate</text>
   <path d="M1538 865 V925" class="arrow"/>
 
-  <text x="70" y="1040" class="small">Hybrid runtime: USE remains in TensorFlow; the RT-1 policy network runs in ONNX Runtime.</text>
+  <text x="70" y="1040" class="small">ONNX-only inference: USE and the RT-1 policy network run in ONNX Runtime.</text>
 </svg>

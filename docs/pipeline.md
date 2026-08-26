@@ -9,17 +9,18 @@
 ![RT-1 ONNX inference architecture](../assets/rt1_onnx_architecture.svg)
 
 
-ONNX 정책 네트워크는 다음 세 모델로 구성됩니다.
+전체 추론 파이프라인은 다음 네 ONNX 모델로 구성됩니다.
 
 | 모델 | 역할 | 주요 출력 shape |
 | --- | --- | --- |
+| `model.onnx` (USE Large `/5`) | 자연어 지시문을 언어 임베딩으로 변환 | `[B, 512]` |
 | `film_efficientnet.onnx` | 언어 조건이 적용된 시각 특징 추출 | `[B x T, 9, 9, 512]` |
 | `token_learner.onnx` | 공간 특징을 프레임당 8개 토큰으로 압축 | `[B x T, 8, 512]` |
 | `transformer.onnx` | 시계열 image/action sequence에서 action logits 예측 | `[B, 114, 256]` |
 
-공식 `rt-1-main` 체크포인트의 가중치는 각 ONNX 파일에 포함됩니다. 세 ONNX
-모델의 전체 크기는 약 182 MiB이며 Universal Sentence Encoder는 별도의
-로컬 SavedModel로 저장됩니다.
+공식 `rt-1-main` 체크포인트의 가중치는 세 정책 ONNX 파일에 포함됩니다.
+정책 모델의 전체 크기는 약 182 MiB이고 ONNX USE Large `/5`는 약 562
+MiB입니다.
 
 ## 1. 파이프라인 입력
 
@@ -61,12 +62,12 @@ float32 [B, 512]
 모델은 다음 경로에서 지연 로딩됩니다.
 
 ```text
-models/universal_sentence_encoder_large/5/
+models/universal_sentence_encoder_large_onnx/5/model.onnx
 ```
 
-자연어 인코더는 아직 ONNX로 변환하지 않았습니다. 따라서 이 단계에는
-TensorFlow Hub가 필요합니다. 생성된 하나의 언어 임베딩은 같은 episode의
-모든 frame에 반복해서 적용됩니다.
+자연어 인코더는 ONNX Runtime으로 실행되며 문자열 tokenizer를 위해 ONNX
+Runtime Extensions의 custom operator를 등록합니다. 생성된 하나의 언어
+임베딩은 같은 episode의 모든 frame에 반복해서 적용됩니다.
 
 ## 3. 이미지 전처리
 
@@ -306,8 +307,9 @@ JSON에는 다음 정보가 저장됩니다.
 
 ## 현재 범위
 
-- USE Large `/5`는 TensorFlow SavedModel로 실행합니다.
-- 세 정책 모델은 ONNX Runtime의 `CPUExecutionProvider`를 사용합니다.
+- USE Large `/5`와 세 정책 모델은 ONNX Runtime의 `CPUExecutionProvider`를
+  사용합니다.
+- USE의 tokenizer 실행에는 ONNX Runtime Extensions가 필요합니다.
 - RT-1 출력은 end-effector와 mobile-base action이며 개별 arm joint 값이
   아닙니다.
 - MuJoCo 시각화는 action을 이해하기 위한 도식 모델이며 원본 EDR 로봇의
