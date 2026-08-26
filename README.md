@@ -2,14 +2,25 @@
 
 > **2026 오픈소스 개발자대회 참가번호 330으로 진행 중인 프로젝트입니다.**
 
-Google의 공식 TensorFlow RT-1 정책 네트워크를 모듈식 ONNX 모델로
-변환하고, 실제 RT-1 로봇 에피소드에서 두 구현이 동일한 행동을
-출력하는지 단계별·end-to-end 방식으로 검증하는 오픈소스 프로젝트입니다.
+Google의 공식 TensorFlow RT-1을 범용 ONNX 추론 파이프라인으로 전환하고
+실제 로봇 episode에서 출력 동등성을 검증하여, 다양한 하드웨어와 실행
+환경에서 RT-1을 쉽게 재현하고 확장할 수 있도록 한 오픈소스 프로젝트입니다.
 
-기존 RT-1은 오래된 TensorFlow 및 Tensor2Robot 환경에 의존합니다. 이
-프로젝트는 핵심 정책 네트워크를 개방형 ONNX 형식으로 이전하여 다양한
-하드웨어와 실행 환경에서 RT-1 추론을 쉽게 재현하고 확장할 수 있도록 하는
-것을 목표로 합니다.
+## DEMO
+
+Episode 3의 `move coke can near water bottle` 지시문에 대한 실제 카메라
+관측과 ONNX RT-1 action의 MuJoCo 시각화입니다.
+
+![Episode 3 camera observation and ONNX RT-1 MuJoCo action](visualization_artifacts/episode_00003/camera_and_world_vector.gif)
+
+## 추론 파이프라인
+
+자연어 지시문과 카메라 관측을 네 개의 ONNX 모델에 연결해 11개의
+로봇 action을 출력합니다. 자연어 명령과 카메라 영상이 로봇의 움직임으로
+바뀌는 자세한 과정은 [추론 파이프라인 상세 문서](docs/pipeline.md)를
+참고하세요.
+
+![RT-1 ONNX inference architecture](assets/rt1_onnx_architecture.svg)
 
 
 ## 개발 단계
@@ -55,12 +66,6 @@ action token 불일치 프레임: 0
 이 결과는 기록된 실제 RT-1 관측 데이터에 대해 ONNX 정책 네트워크가 공식
 TensorFlow 기준 구현과 사실상 동일한 행동을 출력했음을 의미합니다. 실제
 로봇에서의 물리적 안전성이나 작업 성공률을 인증하는 결과는 아닙니다.
-
-## 추론 파이프라인
-
-자연어 지시문과 카메라 관측을 네 개의 ONNX 모델에 연결해 11개의
-로봇 action을 출력합니다. tensor shape, history, attention mask 및 action
-복원 과정은 [추론 파이프라인 상세 문서](docs/pipeline.md)를 참고하세요.
 
 ## 환경 설정
 
