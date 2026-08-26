@@ -7,11 +7,15 @@ Fractal episode를 전체 원본 데이터셋 없이 선택적으로 준비하�
 명령은 가상환경을 활성화한 뒤 저장소 최상위에서 실행합니다. 환경 준비는
 [`setup.md`](setup.md)를 참고하세요.
 
-## Universal Sentence Encoder Large /5
+## ONNX Universal Sentence Encoder Large /5
 
 RT-1은 Universal Sentence Encoder Large `/5`를 사용하여 자연어 지시문을
 512차원 언어 임베딩으로 변환합니다. ONNX-only 추론에는 원본 TensorFlow Hub
 모델을 full-precision ONNX로 변환한 커뮤니티 모델을 사용합니다.
+
+일반적인 ONNX RT-1 추론에는 TensorFlow SavedModel 형식의 USE가 필요하지
+않습니다. 아래 스크립트는 ONNX 모델만 다운로드하며 TensorFlow Hub 모델은
+다운로드하지 않습니다.
 
 다운로드 스크립트:
 
@@ -37,10 +41,12 @@ models/universal_sentence_encoder_large_onnx/5/
   `d267b0955793f866593e49ba58474fb57f5314cf757ec0945127c521c569b22f`
 
 `RT1ONNXPipeline`은 ONNX Runtime Extensions의 tokenizer custom operator를
-등록하고 이 모델에 instruction 문자열을 직접 입력합니다.
+등록하고 이 모델에 instruction 문자열을 직접 입력합니다. 모델 크기는 약
+562 MiB입니다.
 
 다운로드한 모델은 Git에서 제외됩니다. 모델 자체에는 TensorFlow Hub의 원
-배포자가 정한 라이선스와 이용 조건이 적용됩니다. 자세한 고지는
+배포자와 ONNX 변환본 배포자가 정한 라이선스 및 이용 조건이 적용됩니다.
+자세한 고지는
 [`../THIRD_PARTY_NOTICES.md`](../THIRD_PARTY_NOTICES.md)를 참고하세요.
 
 ## Fractal RT-1 episode
