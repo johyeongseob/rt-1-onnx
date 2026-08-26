@@ -1,70 +1,101 @@
-"""Download the pinned Universal Sentence Encoder used for validation."""
+"""Download the pinned ONNX USE Large /5 model used by RT-1 inference."""
 
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
-import shutil
-import tempfile
 from pathlib import Path
+import tempfile
+from urllib.request import urlopen
 
-import tensorflow as tf
-import tensorflow_hub as hub
 
-
-MODEL_URL = "https://tfhub.dev/google/universal-sentence-encoder-large/5"
-REPOSITORY_DIR = Path(__file__).resolve().parent.parent
-DEFAULT_OUTPUT_DIR = (
-    REPOSITORY_DIR / "models" / "universal_sentence_encoder_large" / "5"
+MODEL_URL = (
+    "https://huggingface.co/SamLowe/"
+    "universal-sentence-encoder-large-5-onnx/resolve/main/model.onnx"
 )
+MODEL_SHA256 = (
+    "d267b0955793f866593e49ba58474fb57f5314cf757ec0945127c521c569b22f"
+)
+REPOSITORY_DIR = Path(__file__).resolve().parent.parent
+DEFAULT_OUTPUT_PATH = (
+    REPOSITORY_DIR
+    / "models"
+    / "universal_sentence_encoder_large_onnx"
+    / "5"
+    / "model.onnx"
+)
+CHUNK_SIZE = 1024 * 1024
 
 
 def _parse_args() -> argparse.Namespace:
   parser = argparse.ArgumentParser(
       description=(
-          "Download Universal Sentence Encoder Large /5 from TensorFlow Hub "
-          "and store an explicit local copy for reproducible RT-1 validation."
+          "Download the pinned community ONNX conversion of Universal "
+          "Sentence Encoder Large /5."
       )
   )
   parser.add_argument(
-      "--output-dir",
+      "--output",
       type=Path,
-      default=DEFAULT_OUTPUT_DIR,
-      help="Directory in which to store the TensorFlow SavedModel.",
+      default=DEFAULT_OUTPUT_PATH,
+      help="Destination path for model.onnx.",
   )
   return parser.parse_args()
 
 
 def main() -> None:
   args = _parse_args()
-  output_dir = args.output_dir.expanduser().resolve()
-
-  if output_dir.exists():
+  output_path = args.output.expanduser().resolve()
+  if output_path.exists():
     raise FileExistsError(
-        f"Output directory already exists: {output_dir}\n"
+        f"Output file already exists: {output_path}\n"
         "Remove it explicitly before downloading the model again."
     )
 
-  output_dir.parent.mkdir(parents=True, exist_ok=True)
-  cached_model_dir = Path(hub.resolve(MODEL_URL))
+  output_path.parent.mkdir(parents=True, exist_ok=True)
+  digest = hashlib.sha256()
+  with tempfile.NamedTemporaryFile(
+      prefix=f".{output_path.name}-",
+      dir=output_path.parent,
+      delete=False,
+  ) as temporary_file:
+    temporary_path = Path(temporary_file.name)
+    try:
+      with urlopen(MODEL_URL) as response:  # nosec B310: pinned HTTPS URL
+        while chunk := response.read(CHUNK_SIZE):
+          temporary_file.write(chunk)
+          digest.update(chunk)
+    except Exception:
+      temporary_path.unlink(missing_ok=True)
+      raise
 
-  with tempfile.TemporaryDirectory(
-      prefix=f".{output_dir.name}-", dir=output_dir.parent
-  ) as temporary_dir:
-    temporary_model_dir = Path(temporary_dir) / "model"
-    shutil.copytree(cached_model_dir, temporary_model_dir)
-
-    metadata = {
-        "model_url": MODEL_URL,
-        "tensorflow_version": tf.__version__,
-        "tensorflow_hub_version": hub.__version__,
-    }
-    (temporary_model_dir / "download_metadata.json").write_text(
-        json.dumps(metadata, indent=2) + "\n", encoding="utf-8"
+  actual_sha256 = digest.hexdigest()
+  if actual_sha256 != MODEL_SHA256:
+    temporary_path.unlink(missing_ok=True)
+    raise ValueError(
+        "Downloaded model checksum mismatch: "
+        f"expected {MODEL_SHA256}, received {actual_sha256}"
     )
-    temporary_model_dir.rename(output_dir)
+  temporary_path.replace(output_path)
 
-  print(f"Saved USE Large /5 to {output_dir}")
+  metadata = {
+      "source": MODEL_URL,
+      "sha256": MODEL_SHA256,
+      "conversion": (
+          "SamLowe/universal-sentence-encoder-large-5-onnx"
+      ),
+      "original_model": (
+          "https://tfhub.dev/google/universal-sentence-encoder-large/5"
+      ),
+  }
+  metadata_path = output_path.with_name("download_metadata.json")
+  metadata_path.write_text(
+      json.dumps(metadata, indent=2) + "\n", encoding="utf-8"
+  )
+
+  print(f"Saved ONNX USE Large /5 to {output_path}")
+  print(f"SHA-256: {actual_sha256}")
 
 
 if __name__ == "__main__":
