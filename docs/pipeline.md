@@ -18,7 +18,7 @@
 | `token_learner.onnx` | 공간 특징을 프레임당 8개 토큰으로 압축 | `[B x T, 8, 512]` |
 | `transformer.onnx` | 시계열 image/action sequence에서 action logits 예측 | `[B, 114, 256]` |
 
-공식 `rt-1-main` 체크포인트의 가중치는 세 정책 ONNX 파일에 포함됩니다.
+공식 `rt1main` 체크포인트의 가중치는 세 정책 ONNX 파일에 포함됩니다.
 정책 모델의 전체 크기는 약 182 MiB이고 ONNX USE Large `/5`는 약 562
 MiB입니다.
 

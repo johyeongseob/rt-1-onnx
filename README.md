@@ -1,6 +1,6 @@
 # RT-1 ONNX
 
-> **2026 오픈소스 개발자대회 참가번호 330으로 진행 중인 프로젝트입니다.**
+> **이 프로젝트는 2026 오픈소스 개발자대회 참가번호 330으로 진행 중인 프로젝트입니다.**
 
 Google의 공식 TensorFlow RT-1을 범용 ONNX 추론 파이프라인으로 전환하고
 실제 로봇 episode에서 출력 동등성을 검증하여, 다양한 하드웨어와 실행
@@ -30,7 +30,7 @@ Episode 3의 `move coke can near water bottle` 지시문에 대한 실제 카메
 현재 저장소에는 다음 기능과 검증 결과가 구현되어 있습니다.
 
 - WSL2 Ubuntu 22.04 기반 공식 TensorFlow RT-1 실행환경 구축
-- 공식 `rt-1-main` 체크포인트를 사용한 모듈식 ONNX 변환
+- 공식 `rt1main` 체크포인트를 사용한 모듈식 ONNX 변환
 - ONNX USE Large `/5`를 연결한 자연어 instruction 기반 ONNX-only 추론
 - NumPy/Python 기반 이미지 전처리, 6프레임 history, Transformer 입력 구성,
   attention mask 및 action 복원
@@ -139,10 +139,11 @@ rt-1-onnx/
 - [RT-1 논문](https://arxiv.org/abs/2212.06817)
 - [google-research/robotics_transformer](https://github.com/google-research/robotics_transformer)
 - [google-research/tensor2robot](https://github.com/google-research/tensor2robot)
-- [Universal Sentence Encoder](https://tfhub.dev/google/universal-sentence-encoder-large/5)
-- [ONNX USE Large `/5` 변환본](https://huggingface.co/SamLowe/universal-sentence-encoder-large-5-onnx)
+- [Universal Sentence Encoder Large `/5` 원본](https://tfhub.dev/google/universal-sentence-encoder-large/5)
+- [Universal Sentence Encoder Large `/5` ONNX 변환본](https://huggingface.co/SamLowe/universal-sentence-encoder-large-5-onnx)
 - [Fractal RT-1 데이터셋](https://www.tensorflow.org/datasets/catalog/fractal20220817_data)
 - [ONNX](https://onnx.ai/)
+- [tf2onnx](https://github.com/onnx/tensorflow-onnx) — ONNX 변환
 - [ONNX Runtime](https://onnxruntime.ai/)
 - [ONNX Runtime Extensions](https://github.com/microsoft/onnxruntime-extensions)
 - [MuJoCo](https://mujoco.org/)
