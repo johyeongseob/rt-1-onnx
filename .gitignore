@@ -21,6 +21,9 @@ validation_artifacts/
 
 # Generated visualization artifacts
 visualization_artifacts/
+!visualization_artifacts/episode_00003/
+visualization_artifacts/episode_00003/*
+!visualization_artifacts/episode_00003/camera_and_world_vector.gif
 
 # Local architecture presentation
 architecture.pptx
