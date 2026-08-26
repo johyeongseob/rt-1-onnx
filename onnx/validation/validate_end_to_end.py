@@ -52,7 +52,8 @@ def _parse_args() -> argparse.Namespace:
       "--use-model",
       type=Path,
       default=(
-          REPOSITORY_DIR / "models/universal_sentence_encoder_large/5"
+          REPOSITORY_DIR
+          / "models/universal_sentence_encoder_large_onnx/5/model.onnx"
       ),
   )
   parser.add_argument(
@@ -93,7 +94,7 @@ def main() -> None:
       args.film_model,
       args.token_learner_model,
       args.transformer_model,
-      args.use_model,
+      use_model=args.use_model,
   )
   tokens, actions = pipeline.predict_instruction(images, instruction)
 

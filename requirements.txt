@@ -6,7 +6,6 @@ tensorflow-probability==0.22.1
 tf-agents==0.18.0
 tensorflow-datasets==4.9.4
 tensorflow-metadata==1.17.2
-tensorflow-hub==0.15.0
 tf-slim==1.1.0
 gin-config==0.5.0
 typing-extensions==4.5.0
@@ -21,6 +20,7 @@ protobuf==4.21.12
 tf2onnx==1.17.0
 onnx==1.16.2
 onnxruntime==1.18.1
+onnxruntime-extensions==0.15.2
 
 # Data and image processing
 numpy==1.26.4

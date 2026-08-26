@@ -44,7 +44,8 @@ def _parse_args() -> argparse.Namespace:
       "--use-model",
       type=Path,
       default=(
-          REPOSITORY_DIR / "models/universal_sentence_encoder_large/5"
+          REPOSITORY_DIR
+          / "models/universal_sentence_encoder_large_onnx/5/model.onnx"
       ),
   )
   return parser.parse_args()
@@ -72,7 +73,7 @@ def main() -> None:
       REPOSITORY_DIR / "models/film_efficientnet/film_efficientnet.onnx",
       REPOSITORY_DIR / "models/token_learner/token_learner.onnx",
       REPOSITORY_DIR / "models/transformer/transformer.onnx",
-      args.use_model,
+      use_model=args.use_model,
   )
   tokens, actions = pipeline.predict_episode_instruction(images, instruction)
   steps = []

@@ -8,6 +8,7 @@ import sys
 import numpy as np
 import numpy.typing as npt
 import onnxruntime as ort
+from onnxruntime_extensions import get_library_path
 
 
 ONNX_DIR = Path(__file__).resolve().parent
@@ -24,7 +25,11 @@ EMBEDDING_DIM = 512
 TOKENS_PER_STEP = IMAGE_TOKENS + ACTION_TOKENS
 SEQUENCE_LENGTH = TIME_STEPS * TOKENS_PER_STEP
 DEFAULT_USE_MODEL = (
-    ONNX_DIR.parent / "models" / "universal_sentence_encoder_large" / "5"
+    ONNX_DIR.parent
+    / "models"
+    / "universal_sentence_encoder_large_onnx"
+    / "5"
+    / "model.onnx"
 )
 
 
@@ -54,7 +59,7 @@ def _attention_mask() -> npt.NDArray[np.float32]:
 
 
 class RT1ONNXPipeline:
-  """Connect FiLM-EfficientNet, TokenLearner, and Transformer ONNX models."""
+  """Connect the USE encoder and three RT-1 policy ONNX models."""
 
   def __init__(
       self,
@@ -64,6 +69,7 @@ class RT1ONNXPipeline:
       use_model: Path | str = DEFAULT_USE_MODEL,
   ) -> None:
     model_paths = {
+        "USE Large /5": Path(use_model).expanduser().resolve(),
         "FiLM-EfficientNet": Path(film_model).expanduser().resolve(),
         "TokenLearner": Path(token_learner_model).expanduser().resolve(),
         "Transformer": Path(transformer_model).expanduser().resolve(),
@@ -73,6 +79,13 @@ class RT1ONNXPipeline:
         raise FileNotFoundError(f"{name} ONNX model was not found: {path}")
 
     providers = ["CPUExecutionProvider"]
+    use_options = ort.SessionOptions()
+    use_options.register_custom_ops_library(get_library_path())
+    self._use = ort.InferenceSession(
+        str(model_paths["USE Large /5"]),
+        sess_options=use_options,
+        providers=providers,
+    )
     self._film = ort.InferenceSession(
         str(model_paths["FiLM-EfficientNet"]), providers=providers
     )
@@ -82,14 +95,12 @@ class RT1ONNXPipeline:
     self._transformer = ort.InferenceSession(
         str(model_paths["Transformer"]), providers=providers
     )
-    self._use_model_path = Path(use_model).expanduser().resolve()
-    self._use = None
     self._attention_mask = _attention_mask()
 
   def encode_instructions(
       self, instructions: str | list[str] | tuple[str, ...]
   ) -> npt.NDArray[np.float32]:
-    """Encode instruction strings with the pinned USE Large /5 model."""
+    """Encode instruction strings with the ONNX USE Large /5 model."""
     if isinstance(instructions, str):
       instruction_batch = [instructions]
     elif isinstance(instructions, (list, tuple)) and instructions \
@@ -99,15 +110,14 @@ class RT1ONNXPipeline:
       raise TypeError(
           "instructions must be a string or a non-empty list of strings."
       )
-    if not self._use_model_path.is_dir():
-      raise FileNotFoundError(
-          f"Local USE Large /5 model was not found: {self._use_model_path}\n"
-          "Run: python scripts/download_use_model.py"
+    embeddings = self._use.run(
+        ["outputs"], {"inputs": instruction_batch}
+    )[0]
+    if embeddings.shape != (len(instruction_batch), EMBEDDING_DIM):
+      raise ValueError(
+          "USE output must have shape [B, 512]; "
+          f"received {embeddings.shape}."
       )
-    if self._use is None:
-      import tensorflow_hub as hub  # pylint: disable=import-outside-toplevel
-      self._use = hub.load(str(self._use_model_path))
-    embeddings = self._use(instruction_batch).numpy()
     return np.ascontiguousarray(embeddings, dtype=np.float32)
 
   def predict_instruction(
